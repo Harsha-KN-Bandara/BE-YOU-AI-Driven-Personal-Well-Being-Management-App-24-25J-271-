@@ -64,9 +64,8 @@ The system provides personalized feedback through video-based posture analysis a
 - **Video Processing**: OpenCV (for analyzing video frames to detect posture)
 
 ## Architecture
+<img width="716" alt="Architecture  Diagram" src="https://github.com/user-attachments/assets/90e8ab28-a04b-4dab-b8da-7cad2b12d0b4">
 
-![System Architecture](https://your-architecture-diagram-link.png)  
-*Note: Replace with your architecture diagram.*
 
 **BE YOU** is designed with a scalable architecture to process real-time video input and provide instant feedback. The backend handles posture analysis, AI-powered recommendations, and user data storage, while the frontend delivers an engaging user experience.
 
