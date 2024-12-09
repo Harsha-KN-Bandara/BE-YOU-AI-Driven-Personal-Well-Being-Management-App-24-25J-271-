@@ -35,8 +35,9 @@ The system provides personalized feedback through video-based posture analysis a
 - **Emotion Detection**: Analyzes facial expressions from user-uploaded photos or videos to detect emotions like happiness, sadness, and anger.
 - **Emotional Well-being Insights**: Provides feedback based on emotional analysis, suggesting actions to improve emotional health.
 
-### **BMI Detection**
+### **BMI Based Meal Analysor**
 
+- **Meal Evaluation Tool**: The user inputs a picture of their meal into the system, and the system determines whether it is healthy based on their BMI..
 - **Body Mass Index (BMI) Calculation**: Users input their height and weight, and the system calculates BMI.
 - **Health Categorization**: The system categorizes BMI into ranges such as underweight, normal weight, overweight, and obesity, providing health recommendations based on the results.
 
