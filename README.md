@@ -78,7 +78,7 @@ This component analyzes user-uploaded videos and detects posture deviations such
 ### **Emotion Analysis Detection Component**
 
 This component uses **AI and Machine Learning** algorithms to analyze users' facial expressions and detect emotions such as happiness, sadness, anger, etc. This helps provide insights into users' emotional well-being and suggest appropriate actions or feedback.
-####**Methodology**
+#### **Methodology**
 <img width="716" alt="Architecture  Diagram" src="https://github.com/Harsha-KN-Bandara/BE-YOU-AI-Driven-Personal-Well-Being-Management-App-24-25J-271-/blob/main/methodology%20emotion%20analysis.png">
 
 ### **BMI Detection Component**
