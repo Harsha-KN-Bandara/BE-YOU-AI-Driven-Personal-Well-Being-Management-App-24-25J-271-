@@ -1,0 +1,150 @@
+import tensorflow as tf
+from tensorflow.keras.preprocessing.image import ImageDataGenerator
+from tensorflow.keras.applications import MobileNet
+from tensorflow.keras.models import Sequential
+from tensorflow.keras.layers import Dense, GlobalAveragePooling2D
+from tensorflow.keras.optimizers import Adam
+import matplotlib.pyplot as plt
+import numpy as np
+from google.colab import drive
+drive.mount('/content/drive')
+%cd '/content/drive/MyDrive/Research (Be you- personal well being management app)/Jayani/skin type'
+train_path = '/content/drive/MyDrive/Research (Be you- personal well being management app)/Jayani/skin type'
+val_path = '/content/drive/MyDrive/Research (Be you- personal well being management app)/Jayani/skin type'
+train_datagen = ImageDataGenerator(
+    rescale=1.0/255,
+    rotation_range=20,
+    width_shift_range=0.2,
+    height_shift_range=0.2,
+    shear_range=0.2,
+    zoom_range=0.2,
+    horizontal_flip=True,
+    fill_mode='nearest'
+)
+val_datagen = ImageDataGenerator(rescale=1.0/255)
+train_generator = train_datagen.flow_from_directory(
+    train_path,
+    target_size=(224, 224),
+    batch_size=32,
+    class_mode='categorical'
+)
+val_generator = val_datagen.flow_from_directory(
+    val_path,
+    target_size=(224, 224),
+    batch_size=32,
+    class_mode='categorical'
+)
+class_names = sorted(train_generator.class_indices.items(), key=lambda pair:pair[1])
+class_names = np.array([key.title() for key, value in class_names])
+class_names
+for image_batch, label_batch in train_generator:
+  print("Image batch shape: ", image_batch.shape)
+  print("Label batch shape: ", label_batch.shape)
+  break
+base_model = MobileNet(weights='imagenet', include_top=False, input_shape=(224, 224, 3))
+base_model.trainable = False
+model = Sequential([
+    base_model,
+    GlobalAveragePooling2D(),
+    Dense(128, activation='relu'),
+    Dense(train_generator.num_classes, activation='softmax')
+])
+model.compile(optimizer=Adam(learning_rate=0.001), loss='categorical_crossentropy', metrics=['accuracy'])
+model.summary()
+history = model.fit(
+    train_generator,
+    epochs=10,
+    validation_data=val_generator
+)
+plt.figure(figsize=(12, 4))
+
+plt.subplot(1, 2, 1)
+plt.plot(history.history['accuracy'], label='Train Accuracy')
+plt.plot(history.history['val_accuracy'], label='Validation Accuracy')
+plt.legend()
+plt.title('Accuracy')
+
+plt.subplot(1, 2, 2)
+plt.plot(history.history['loss'], label='Train Loss')
+plt.plot(history.history['val_loss'], label='Validation Loss')
+plt.legend()
+plt.title('Loss')
+
+plt.show()
+from tensorflow.keras.models import load_model
+
+model.save('sample_model.h5')
+arr = model.predict(image_batch)
+predicted_id = np.argmax(arr, axis=-1)
+predicted_label_batch = class_names[predicted_id]
+label_id = np.argmax(label_batch, axis=-1)
+true_label_batch = class_names[label_id]
+import matplotlib.pyplot as plt
+import numpy as np; np.random.seed(0)
+import seaborn as sns; sns.set_theme()
+
+con_mat_df=tf.math.confusion_matrix(
+    labels = label_id , predictions = predicted_id
+)
+
+figure = plt.figure(figsize=(5, 5))
+sns.heatmap(con_mat_df, annot=True,cmap=plt.cm.Blues)
+plt.tight_layout()
+plt.ylabel('True label')
+plt.xlabel('Predicted label')
+plt.show()
+from sklearn.metrics import classification_report
+print(classification_report(label_id, predicted_id, zero_division=0))
+from tensorflow.keras.layers import Input, Lambda, Dense, Flatten
+from tensorflow.keras.models import Model
+from tensorflow.compat.v1 import ConfigProto
+from tensorflow.compat.v1 import InteractiveSession
+from tensorflow.keras.preprocessing import image
+from tensorflow.keras.preprocessing.image import ImageDataGenerator,load_img
+from tensorflow.keras.models import Sequential
+import numpy as np
+from glob import glob
+import matplotlib.pyplot as plt
+import numpy as np
+from tensorflow.keras.models import load_model
+from tensorflow.keras.preprocessing import image
+import tensorflow_hub as hub
+model= tf.keras.models.load_model(
+       ('sample_model.h5'),
+       custom_objects={'KerasLayer':hub.KerasLayer}
+)
+img=image.load_img('/content/drive/MyDrive/Research (Be you- personal well being management app)/Jayani/skin tone/Dark/10_0_1_20170110225121326.jpg.chip.jpg',target_size=(224, 224))
+img_array = image.img_to_array(img) / 255.0
+img_array = np.expand_dims(img_array, axis=0)
+predictions = model.predict(img_array)
+predicted_class = np.argmax(predictions[0])
+class_labels = list(train_generator.class_indices.keys())
+print(f"Predicted Class: {class_labels[predicted_class]}")
+classes=class_names
+def predict_image(filename, model):
+    img_ = image.load_img(filename, target_size=(224, 224))
+    img_array = image.img_to_array(img_)
+    img_processed = np.expand_dims(img_array, axis=0)
+    img_processed /= 255.
+
+    prediction = model.predict(img_processed)
+    prob = prediction
+
+    index = np.argmax(prediction)
+    confidence = prob[0][index]
+
+
+    if confidence >= 0.3:
+        plt.title("Prediction - {}".format(str(classes[index]).title()), size=18, color='orange')
+        plt.imshow(img_array)
+    else:
+        plt.title("Not Detected", size=18, color='red')
+        plt.imshow(img_array)
+predict_image('/content/drive/MyDrive/Research (Be you- personal well being management app)/Jayani/skin type/Dry/653704c44b418da75e5e584065796cf3.jpg', model)
+from google.colab import files
+
+uploaded = files.upload()
+
+for filename in uploaded.keys():
+    print(f'File uploaded: {filename}')
+    predict_image(filename, model)
